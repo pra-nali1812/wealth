@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% block title %}My Portfolio{% endblock %}
+
+{% block content %}
+<h1>Your Portfolio</h1>
+
+<!-- Stocks Table -->
+<h2>Stocks</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Symbol</th>
+            <th>Quantity</th>
+            <th>Purchase Price</th>
+            <th>Current Price</th>
+            <th>Profit/Loss</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for stock in stocks %}
+            {% set current_price = live_prices.stocks.get(stock.stock_symbol, 0) %}
+            {% set total_cost = stock.quantity * stock.purchase_price %}
+            {% set total_current = stock.quantity * current_price %}
+            {% set profit_loss = total_current - total_cost %}
+            <tr>
+                <td>{{ stock.stock_symbol }}</td>
+                <td>{{ stock.quantity }}</td>
+                <td>${{ "%.2f"|format(stock.purchase_price) }}</td>
+                <td>${{ "%.2f"|format(current_price) }}</td>
+                <td style="color: {% if profit_loss >= 0 %}green{% else %}red{% endif %};">
+                    ${{ "%.2f"|format(profit_loss) }}
+                </td>
+                <td>
+                    <a href="{{ url_for('market_data.stock_price', symbol=stock.stock_symbol) }}">
+                        Check Live Price
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Cryptos Table -->
+<h2>Cryptos</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Symbol</th>
+            <th>Quantity</th>
+            <th>Purchase Price</th>
+            <th>Current Price</th>
+            <th>Profit/Loss</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for crypto in cryptos %}
+            {% set current_price = live_prices.cryptos.get(crypto.crypto_symbol, 0) %}
+            {% set total_cost = crypto.quantity * crypto.purchase_price %}
+            {% set total_current = crypto.quantity * current_price %}
+            {% set profit_loss = total_current - total_cost %}
+            <tr>
+                <td>{{ crypto.crypto_symbol }}</td>
+                <td>{{ crypto.quantity }}</td>
+                <td>${{ "%.2f"|format(crypto.purchase_price) }}</td>
+                <td>${{ "%.2f"|format(current_price) }}</td>
+                <td style="color: {% if profit_loss >= 0 %}green{% else %}red{% endif %};">
+                    ${{ "%.2f"|format(profit_loss) }}
+                </td>
+                <td>
+                    <a href="{{ url_for('market_data.crypto_price', symbol=crypto.crypto_symbol) }}">
+                        Check Live Price
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Mutual Funds Table -->
+<h2>Mutual Funds</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Symbol</th>
+            <th>Quantity</th>
+            <th>Purchase Price</th>
+            <th>Current Price</th>
+            <th>Profit/Loss</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for fund in mutual_funds %}
+            {% set current_price = live_prices.funds.get(fund.fund_symbol, 0) %}
+            {% set total_cost = fund.quantity * fund.purchase_price %}
+            {% set total_current = fund.quantity * current_price %}
+            {% set profit_loss = total_current - total_cost %}
+            <tr>
+                <td>{{ fund.fund_symbol }}</td>
+                <td>{{ fund.quantity }}</td>
+                <td>${{ "%.2f"|format(fund.purchase_price) }}</td>
+                <td>${{ "%.2f"|format(current_price) }}</td>
+                <td style="color: {% if profit_loss >= 0 %}green{% else %}red{% endif %};">
+                    ${{ "%.2f"|format(profit_loss) }}
+                </td>
+                <td>
+                    <a href="{{ url_for('market_data.fund_price') }}?symbol={{ fund.fund_symbol }}">
+                        Check Live Price
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

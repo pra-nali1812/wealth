@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile & Settings</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+        h2 { color: #007bff; }
+        form div { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; margin-top: 5px; }
+        button { padding: 10px 15px; background-color: #28a745; color: white; border: none; }
+        .logout { background-color: #dc3545; float: right; }
+    </style>
+</head>
+<body>
+    <h2>Profile & Settings</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <ul>
+          {% for category, message in messages %}
+            <li style="color: {% if category == 'success' %}green{% else %}red{% endif %}; font-weight: bold;">
+              {{ message }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <div>
+            <label>Username:</label>
+            <input type="text" value="{{ user.username }}" disabled />
+        </div>
+
+        <div>
+            <label>Email:</label>
+            <input type="email" value="{{ user.email }}" disabled />
+        </div>
+
+        <div>
+            <label>Risk Tolerance:</label>
+            <select name="risk_tolerance">
+                <option value="Low" {% if user.risk_tolerance == 'Low' %}selected{% endif %}>Low</option>
+                <option value="Medium" {% if user.risk_tolerance == 'Medium' %}selected{% endif %}>Medium</option>
+                <option value="High" {% if user.risk_tolerance == 'High' %}selected{% endif %}>High</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Investment Goal:</label>
+            <select name="investment_goal">
+                <option value="Retirement" {% if user.investment_goal == 'Retirement' %}selected{% endif %}>Retirement</option>
+                <option value="Growth" {% if user.investment_goal == 'Growth' %}selected{% endif %}>Growth</option>
+                <option value="Passive Income" {% if user.investment_goal == 'Passive Income' %}selected{% endif %}>Passive Income</option>
+            </select>
+        </div>
+
+        <div>
+            <label>Change Password:</label>
+            <input type="password" name="current_password" placeholder="Current Password">
+            <input type="password" name="new_password" placeholder="New Password">
+        </div>
+
+        <div>
+            <button type="submit">Update Profile</button>
+            <a href="{{ url_for('users.logout') }}">
+                <button type="button" class="logout">Logout</button>
+            </a>
+        </div>
+    </form>
+</body>
+</html>

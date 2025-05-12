@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% block title %}My Portfolio{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f9f9fb;
+        margin: 0;
+        padding: 0;
+    }
+
+    .dashboard-header {
+        text-align: center;
+        color: #2c3e50;
+        margin-top: 30px;
+    }
+
+    .portfolio-container {
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+        width: 95%;
+        max-width: 1200px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    .section-card {
+        background-color: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        padding: 20px;
+    }
+
+    .section-card h2 {
+        margin-top: 0;
+        color: #34495e;
+        text-align: left;
+        border-bottom: 2px solid #3498db;
+        padding-bottom: 10px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    th, td {
+        padding: 12px 10px;
+        border-bottom: 1px solid #ecf0f1;
+        text-align: center;
+        font-size: 15px;
+    }
+
+    th {
+        background-color: #3498db;
+        color: white;
+    }
+
+    tr:hover {
+        background-color: #f0faff;
+    }
+
+    .profit {
+        color: green;
+        font-weight: bold;
+    }
+
+    .loss {
+        color: red;
+        font-weight: bold;
+    }
+
+    .delete-btn {
+        color: #e74c3c;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    .delete-btn:hover {
+        color: #c0392b;
+    }
+
+    .live-link {
+        color: #2980b9;
+        text-decoration: none;
+    }
+
+    .live-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<h1 class="dashboard-header">📊 Your Portfolio Dashboard</h1>
+
+<div class="portfolio-container">
+
+    <!-- Stocks -->
+    <div class="section-card">
+        <h2>📈 Stocks</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Quantity</th>
+                    <th>Purchase Price</th>
+                    <th>Current Price</th>
+                    <th>Profit/Loss</th>
+                    <th>Live Price</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stock in stocks %}
+                    {% set current_price = live_prices.get(stock.stock_symbol) %}
+                    {% set total_cost = stock.quantity * stock.purchase_price %}
+                    {% set total_current = (current_price or 0) * stock.quantity %}
+                    {% set profit_loss = total_current - total_cost %}
+                    <tr>
+                        <td>{{ stock.stock_symbol }}</td>
+                        <td>{{ stock.quantity }}</td>
+                        <td>${{ "%.2f"|format(stock.purchase_price) }}</td>
+                        <td>{% if current_price is not none %}${{ "%.2f"|format(current_price) }}{% else %}N/A{% endif %}</td>
+                        <td class="{{ 'profit' if profit_loss >= 0 else 'loss' }}">
+                            ${{ "%.2f"|format(profit_loss) }}
+                        </td>
+                        <td>
+                            <a class="live-link" href="{{ url_for('market_data.stock_price', symbol=stock.stock_symbol) }}">Check Live</a>
+                        </td>
+                        <td>
+                            <a class="delete-btn" href="{{ url_for('portfolio.delete_stock', stock_id=stock.id) }}" onclick="return confirm('Delete this stock?');">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Cryptos -->
+    <div class="section-card">
+        <h2>🪙 Cryptos</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Quantity</th>
+                    <th>Purchase Price</th>
+                    <th>Current Price</th>
+                    <th>Profit/Loss</th>
+                    <th>Live Price</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for crypto in cryptos %}
+                    {% set current_price = live_prices.get(crypto.crypto_symbol) %}
+                    {% set total_cost = crypto.quantity * crypto.purchase_price %}
+                    {% set total_current = (current_price or 0) * crypto.quantity %}
+                    {% set profit_loss = total_current - total_cost %}
+                    <tr>
+                        <td>{{ crypto.crypto_symbol }}</td>
+                        <td>{{ crypto.quantity }}</td>
+                        <td>${{ "%.2f"|format(crypto.purchase_price) }}</td>
+                        <td>{% if current_price is not none %}${{ "%.2f"|format(current_price) }}{% else %}N/A{% endif %}</td>
+                        <td class="{{ 'profit' if profit_loss >= 0 else 'loss' }}">
+                            ${{ "%.2f"|format(profit_loss) }}
+                        </td>
+                        <td>
+                            <a class="live-link" href="{{ url_for('market_data.crypto_price', symbol=crypto.crypto_symbol) }}">Check Live</a>
+                        </td>
+                        <td>
+                            <a class="delete-btn" href="{{ url_for('portfolio.delete_crypto', crypto_id=crypto.id) }}" onclick="return confirm('Delete this crypto?');">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Mutual Funds -->
+    <div class="section-card">
+        <h2>💼 Mutual Funds</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Quantity</th>
+                    <th>Purchase Price</th>
+                    <th>Current Price</th>
+                    <th>Profit/Loss</th>
+                    <th>Live Price</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fund in mutual_funds %}
+                    {% set current_price = live_prices.get(fund.fund_symbol) %}
+                    {% set total_cost = fund.quantity * fund.purchase_price %}
+                    {% set total_current = (current_price or 0) * fund.quantity %}
+                    {% set profit_loss = total_current - total_cost %}
+                    <tr>
+                        <td>{{ fund.fund_symbol }}</td>
+                        <td>{{ fund.quantity }}</td>
+                        <td>${{ "%.2f"|format(fund.purchase_price) }}</td>
+                        <td>{% if current_price is not none %}${{ "%.2f"|format(current_price) }}{% else %}N/A{% endif %}</td>
+                        <td class="{{ 'profit' if profit_loss >= 0 else 'loss' }}">
+                            ${{ "%.2f"|format(profit_loss) }}
+                        </td>
+                        <td>
+                            <a class="live-link" href="{{ url_for('market_data.fund_price') }}?symbol={{ fund.fund_symbol }}">Check Live</a>
+                        </td>
+                        <td>
+                            <a class="delete-btn" href="{{ url_for('portfolio.delete_fund', fund_id=fund.id) }}" onclick="return confirm('Delete this fund?');">Delete</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+   <div style="max-width: 800px; margin: 20px auto; padding: 20px; border: 1px solid #bdc3c7; border-radius: 10px; background-color: #ecf0f1;">
+    <h2 style="text-align: center; color: #2c3e50;">Portfolio Summary</h2>
+    <p style="font-size: 18px; text-align: center;">Total Invested: <strong>${{ "%.2f"|format(total_invested) }}</strong></p>
+    <p style="font-size: 18px; text-align: center;">Current Value: <strong>${{ "%.2f"|format(total_current) }}</strong></p>
+    <p style="font-size: 18px; text-align: center; color: {% if total_gain_loss >= 0 %}green{% else %}red{% endif %};">
+        Overall {{ 'Profit' if total_gain_loss >= 0 else 'Loss' }}: <strong>${{ "%.2f"|format(total_gain_loss) }}</strong>
+    </p>
+</div>
+
+{% endblock %}

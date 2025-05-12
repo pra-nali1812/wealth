@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Portfolio Overview{% endblock %}
+
+{% block content %}
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px;">
+
+        <h2 style="color: #004080; text-align: center; margin-bottom: 30px;">
+            Portfolio Overview 💼
+        </h2>
+
+        <div style="background-color: #f0f8ff; padding: 15px 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); max-width: 600px; margin: 0 auto 20px;">
+            <p><strong>Total Value:</strong> ${{ total_value }}</p>
+            <p><strong>ROI:</strong> {{ roi }}%</p>
+            <p><strong>Profit/Loss:</strong> ${{ profit_loss }}</p>
+        </div>
+
+        <h3 style="color: #005cbf; margin-top: 40px;">AI Recommendation</h3>
+        <ul style="padding-left: 20px; line-height: 1.6;">
+            {% for suggestion in ai_suggestion %}
+                <li>{{ suggestion }}</li>
+            {% endfor %}
+        </ul>
+
+        <h3 style="color: #005cbf; margin-top: 40px;">Asset Allocation</h3>
+        <div style="display: flex; justify-content: center; margin-top: 10px;">
+            <canvas id="pieChart" width="300" height="300" style="max-width: 100%;"></canvas>
+        </div>
+
+        <h3 style="color: #005cbf; margin-top: 40px;">Performance Over Time</h3>
+        <div style="text-align: center;">
+            <img src="{{ url_for('overview.performance_chart') }}" alt="Performance Chart"
+                 style="width: 100%; max-width: 600px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-top: 15px;" />
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const pieCtx = document.getElementById('pieChart').getContext('2d');
+        const pieChart = new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Stocks', 'Crypto', 'Mutual Funds'],
+                datasets: [{
+                    label: 'Asset Allocation',
+                    data: [
+                        {{ asset_breakdown['Stocks'] }},
+                        {{ asset_breakdown['Crypto'] }},
+                        {{ asset_breakdown['Mutual Funds'] }}
+                    ],
+                    backgroundColor: ['#007bff', '#ffc107', '#28a745'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: false,
+                maintainAspectRatio: true
+            }
+        });
+    </script>
+{% endblock %}

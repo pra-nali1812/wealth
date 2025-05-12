@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Market Data{% endblock %}
+
+{% block content %}
+<h1>Live Market Data</h1>
+
+<h2>Stock: {{ stock.symbol }}</h2>
+<p>Price: ${{ stock.price }}</p>
+<p>Change: {{ stock.change }} ({{ stock.percent_change }})</p>
+
+<h2>Crypto: {{ crypto.symbol }}</h2>
+<p>Price: ${{ crypto.price }}</p>
+
+<a href="{{ url_for('portfolio.view_portfolio') }}">Back to Portfolio</a>
+{% endblock %}

@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    body {
+        font-family: "Segoe UI", sans-serif;
+        background-color: #f4f6f8;
+        padding: 30px;
+        color: #2c3e50;
+    }
+
+    h1, h2 {
+        color: #1a202c;
+    }
+
+    .section {
+        background: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    .asset-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .asset-list li {
+        margin-bottom: 10px;
+        padding: 10px;
+        border: 1px solid #e1e4e8;
+        border-radius: 6px;
+        background-color: #fafbfc;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .price-result {
+        font-style: italic;
+        margin-left: 10px;
+        font-weight: bold;
+        color: #555;
+    }
+
+    button {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 6px 12px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #2980b9;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    th, td {
+        padding: 12px;
+        border: 1px solid #e0e0e0;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f0f0f0;
+        color: #333;
+    }
+
+    td.positive {
+        color: green;
+        font-weight: bold;
+    }
+
+    td.negative {
+        color: red;
+        font-weight: bold;
+    }
+
+    canvas {
+        margin-top: 20px;
+        width: 100% !important;
+        max-width: 800px;
+    }
+
+    .logout-link {
+        display: inline-block;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #e74c3c;
+    }
+
+    .logout-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="section">
+    <h1>Welcome, {{ current_user.username }}!</h1>
+</div>
+
+<div class="section">
+    <h2>🧾 Portfolio Holdings</h2>
+
+    <h3>Stocks</h3>
+    <ul class="asset-list">
+        {% for stock in stocks %}
+        <li>
+            {{ stock.stock_symbol }} - {{ stock.quantity }} units at ${{ stock.purchase_price }}
+            <span>
+                <button onclick="fetchPrice('{{ stock.stock_symbol }}', this)">Live Price</button>
+                <span class="price-result"></span>
+            </span>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <h3>Cryptos</h3>
+    <ul class="asset-list">
+        {% for crypto in cryptos %}
+        <li>
+            {{ crypto.crypto_symbol }} - {{ crypto.quantity }} units at ${{ crypto.purchase_price }}
+            <span>
+                <button onclick="fetchCryptoPrice('{{ crypto.crypto_symbol }}', this)">Live Price</button>
+                <span class="price-result"></span>
+            </span>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <h3>Mutual Funds</h3>
+    <ul class="asset-list">
+        {% for fund in mutual_funds %}
+        <li>
+            {{ fund.fund_symbol }} - {{ fund.quantity }} units at ${{ fund.purchase_price }}
+            <span>
+                <button onclick="fetchFundPrice('{{ fund.fund_symbol }}', this)">Live Price</button>
+                <span class="price-result"></span>
+            </span>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<div class="section">
+    <h2>📊 Portfolio Performance (ROI)</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Asset</th>
+                <th>ROI (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in performance_data %}
+            <tr>
+                <td>{{ item.symbol }}</td>
+                <td class="{% if item.roi >= 0 %}positive{% else %}negative{% endif %}">
+                    {{ item.roi | round(2) }}
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="2">No performance data available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <canvas id="roiChart"></canvas>
+</div>
+
+<div class="section">
+    <h2>💡 Investment Recommendations</h2>
+    <ul>
+        {% for suggestion in suggestions %}
+            <li>{{ suggestion }}</li>
+        {% else %}
+            <li>No recommendations available.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+<a class="logout-link" href="{{ url_for('users.logout') }}">Logout</a>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const performanceData = {{ performance_data | tojson }};
+    const labels = performanceData.map(item => item.symbol);
+    const roiData = performanceData.map(item => parseFloat(item.roi.toFixed(2)));
+
+    const ctx = document.getElementById('roiChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'ROI (%)',
+                data: roiData,
+                backgroundColor: roiData.map(r => r >= 0 ? '#2ecc71' : '#e74c3c')
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Return on Investment (%)'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    });
+
+    // Price fetch functions
+    function fetchPrice(symbol, btn) {
+        fetch(`/get_stock_price/${symbol}`)
+            .then(response => response.json())
+            .then(data => {
+                btn.nextElementSibling.innerHTML = data.price
+                    ? `Current Price: $${parseFloat(data.price).toFixed(2)}`
+                    : 'Unavailable';
+            }).catch(() => {
+                btn.nextElementSibling.innerHTML = 'API Error';
+            });
+    }
+
+    function fetchCryptoPrice(symbol, btn) {
+        fetch(`/get_crypto_price/${symbol}`)
+            .then(response => response.json())
+            .then(data => {
+                btn.nextElementSibling.innerHTML = data.price
+                    ? `Current Price: $${parseFloat(data.price).toFixed(2)}`
+                    : 'Unavailable';
+            }).catch(() => {
+                btn.nextElementSibling.innerHTML = 'API Error';
+            });
+    }
+
+    function fetchFundPrice(symbol, btn) {
+        fetch(`/get_fund_price/${symbol}`)
+            .then(response => response.json())
+            .then(data => {
+                btn.nextElementSibling.innerHTML = data.price
+                    ? `Current Price: $${parseFloat(data.price).toFixed(2)}`
+                    : 'Unavailable';
+            }).catch(() => {
+                btn.nextElementSibling.innerHTML = 'API Error';
+            });
+    }
+</script>
+{% endblock %}

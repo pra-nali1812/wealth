@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Your Investment Strategies</h1>
+<ul>
+    {% for strategy in strategies %}
+        <li>
+            Risk Profile: {{ strategy.risk_profile }}<br>
+            Allocations:
+            <ul>
+                <li>Stock: {{ strategy.allocations['stock'] }}%</li>
+                <li>Crypto: {{ strategy.allocations['crypto'] }}%</li>
+                <li>Mutual Fund: {{ strategy.allocations['fund'] }}%</li>
+            </ul>
+        </li>
+    {% endfor %}
+</ul>
+</body>
+</html>

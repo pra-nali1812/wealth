@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RL Portfolio Optimization</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            margin: 40px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        ul {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: fit-content;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        li {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+        a:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Reinforcement Learning Portfolio Optimization</h1>
+    <p>This model has trained over simulated market data. Here is the suggested portfolio allocation:</p>
+    <ul>
+        {% for asset, weight in allocation.items() %}
+            <li><strong>{{ asset }}</strong>: {{ weight }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="/">← Back to Home</a>
+</body>
+</html>

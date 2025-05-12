@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Portfolio Performance</h2>
+<table border="1">
+    <tr>
+        <th>Asset</th>
+        <th>ROI (%)</th>
+    </tr>
+    {% for item in performance_data %}
+    <tr>
+        <td>{{ item.symbol }}</td>
+        <td>{{ item.roi | round(2) }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="{{ url_for('portfolio.view_portfolio') }}">Back to Portfolio</a>
+{% endblock %}
