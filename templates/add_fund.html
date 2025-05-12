@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Add Mutual Fund{% endblock %}
+
+{% block content %}
+<h1>Add Mutual Fund</h1>
+
+<form method="POST" action="{{ url_for('portfolio.add_fund') }}">
+    <label for="fund_symbol">Fund Symbol:</label><br>
+    <input type="text" id="fund_symbol" name="fund_symbol" required><br><br>
+
+    <label for="quantity">Quantity (Units):</label><br>
+    <input type="number" id="quantity" name="quantity" step="0.01" required><br><br>
+
+    <label for="purchase_price">Purchase Price ($):</label><br>
+    <input type="number" id="purchase_price" name="purchase_price" step="0.01" required><br><br>
+
+    <button type="submit">Add Fund</button>
+</form>
+
+<p><a href="{{ url_for('portfolio.view_portfolio') }}">← Back to Portfolio</a></p>
+{% endblock %}

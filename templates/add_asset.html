@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Add Asset{% endblock %}
+
+{% block content %}
+<h2 style="text-align: center; font-family: Arial, sans-serif; margin-bottom: 20px;">Add Asset to Portfolio</h2>
+
+<form method="POST" action="{{ url_for('portfolio.add_asset') }}" style="max-width: 500px; margin: auto; background-color: #f9f9f9; padding: 30px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); font-family: Arial, sans-serif;">
+
+    <label for="asset_type" style="display: block; margin-bottom: 8px; font-weight: bold;">Asset Type:</label>
+    <select id="asset_type" name="asset_type" required onchange="toggleFields()" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin-bottom: 15px;">
+        <option value="">-- Select Asset Type --</option>
+        <option value="stock">Stock</option>
+        <option value="crypto">Cryptocurrency</option>
+        <option value="mutual_fund">Mutual Fund</option>
+    </select>
+
+    <div id="symbol-field">
+        <label for="symbol" style="display: block; margin-bottom: 8px; font-weight: bold;">Symbol:</label>
+        <input type="text" id="symbol" name="symbol" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin-bottom: 15px;">
+    </div>
+
+    <label for="quantity" style="display: block; margin-bottom: 8px; font-weight: bold;">Quantity:</label>
+    <input type="number" step="0.0001" id="quantity" name="quantity" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin-bottom: 15px;">
+
+    <label for="purchase_price" style="display: block; margin-bottom: 8px; font-weight: bold;">Purchase Price:</label>
+    <input type="number" step="0.01" id="purchase_price" name="purchase_price" required style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ccc; margin-bottom: 20px;">
+
+    <button type="submit" style="width: 100%; padding: 12px; background-color: #007bff; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer;">
+        Add Asset
+    </button>
+</form>
+
+<script>
+function toggleFields() {
+    const type = document.getElementById('asset_type').value;
+    const quantity = document.getElementById('quantity');
+    if (type === 'crypto') {
+        quantity.step = "0.0001";
+    } else {
+        quantity.step = "1";
+    }
+}
+</script>
+
+<p style="text-align: center; margin-top: 20px; font-family: Arial, sans-serif;">
+    <a href="{{ url_for('portfolio.view_portfolio') }}" style="color: #007bff; text-decoration: none;">← Back to Portfolio</a>
+</p>
+{% endblock %}

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Price Checker</title>
+    <script>
+        async function fetchStockData() {
+            const symbol = document.getElementById("stockSymbol").value;
+            const resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = ""; // Clear previous results
+
+            if (!symbol) {
+                resultDiv.innerHTML = "<p style='color:red;'>Please enter a stock symbol.</p>";
+                return;
+            }
+
+            try {
+                const response = await fetch(`/stock?symbol=${symbol}`);
+                if (!response.ok) {
+                    const error = await response.json();
+                    resultDiv.innerHTML = `<p style='color:red;'>Error: ${error.error}</p>`;
+                    return;
+                }
+
+                const data = await response.json();
+                resultDiv.innerHTML = `
+                    <h3>Stock Data for ${data.symbol.toUpperCase()}</h3>
+                    <ul>
+                        <li><strong>Open:</strong> ${data.open}</li>
+                        <li><strong>High:</strong> ${data.high}</li>
+                        <li><strong>Low:</strong> ${data.low}</li>
+                        <li><strong>Close:</strong> ${data.close}</li>
+                        <li><strong>Volume:</strong> ${data.volume}</li>
+                    </ul>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p style='color:red;'>Error fetching data: ${error.message}</p>`;
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Stock Price Checker</h1>
+    <form onsubmit="event.preventDefault(); fetchStockData();">
+        <label for="stockSymbol">Enter Stock Symbol:</label>
+        <input type="text" id="stockSymbol" placeholder="e.g., AAPL" required>
+        <button type="submit">Get Stock Data</button>
+    </form>
+    <div id="result" style="margin-top: 20px;"></div>
+</body>
+</html>

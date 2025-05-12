@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Investment Recommendations</h2>
+<ul>
+  {% for suggestion in suggestions %}
+    <li>{{ suggestion }}</li>
+  {% endfor %}
+</ul>
+<a href="{{ url_for('portfolio.view_portfolio') }}">Back to Portfolio</a>
+{% endblock %}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            max-width: 600px;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+        }
+        .profile-box {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .profile-item {
+            margin-bottom: 10px;
+        }
+        .profile-label {
+            font-weight: bold;
+        }
+        .edit-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 16px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .edit-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Your Profile</h1>
+    <div class="profile-box">
+        <div class="profile-item"><span class="profile-label">Username:</span> {{ user.username }}</div>
+        <div class="profile-item"><span class="profile-label">Email:</span> {{ user.email }}</div>
+        <div class="profile-item"><span class="profile-label">Risk Tolerance:</span> {{ user.risk_tolerance or 'Not Set' }}</div>
+        <div class="profile-item"><span class="profile-label">Investment Goal:</span> {{ user.investment_goal or 'Not Set' }}</div>
+
+        <a href="{{ url_for('users.profile') }}" class="edit-button">Edit Profile</a>
+    </div>
+</body>
+</html>
